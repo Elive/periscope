@@ -96,15 +96,10 @@ def main():
 
     subs = []
     for arg in videos:
-        if not options.langs: #Look into the config
-            log.info("No lang given, looking into config file")
-            langs = periscope_client.preferedLanguages
-        else:
-            langs = options.langs
-        sub_a = periscope_client.downloadSubtitle(arg, langs, options.interactive, options.lang_in_name)
-        log.info(sub_a)
+        movie = arg["movie"]
+        langs = arg["langs"]
+        sub_a = periscope_client.downloadSubtitle(movie, langs, options.interactive, options.lang_in_name)
         for sub in sub_a:
-            log.info(sub["lang"])
             if sub:
                 subs.append(sub)
 
@@ -119,6 +114,13 @@ def main():
 
 def recursive_search(entry, options):
     '''searches files in the dir'''
+
+    if not options.langs: #Look into the config
+        log.info("No lang given, looking into config file")
+        langs = periscope_client.preferedLanguages
+    else:
+        langs = options.langs
+
     files = []
     if os.path.isdir(entry):
         #TODO if hidden folder, don't keep going (how to handle windows/mac/linux ?)
@@ -131,10 +133,21 @@ def recursive_search(entry, options):
         if mimetype in SUPPORTED_FORMATS:
             # Add it to the list only if there is not already one (or forced)
             basepath = os.path.splitext(entry)[0]
-            if options.force_download or not (os.path.exists(basepath + '.srt') or os.path.exists(basepath + '.sub')):
-                files.append(os.path.normpath(entry))
+            if options.lang_in_name:
+                ext = ['.srt', '.sub']
+                langg = []
+                for lang in langs:
+                    if not (os.path.exists(basepath + "."+lang + ".srt") or os.path.exists(basepath + "."+lang + ".sub")):
+                        langg.append(lang)
+                if options.force_download or langg:
+                    files.append({"movie": os.path.normpath(entry), "langs": langg})
+                else:
+                    log.info("Skipping file %s as it already has subtitles for all language. Use the --force option to force the download" % entry)
             else:
-                log.info("Skipping file %s as it already has a subtitle. Use the --force option to force the download" % entry)
+                if options.force_download or not (os.path.exists(basepath + '.srt') or os.path.exists(basepath + '.sub')):
+                    files.append({"movie": os.path.normpath(entry), "langs": langs})
+                else:
+                    log.info("Skipping file %s as it already has a subtitle. Use the --force option to force the download" % entry)
         else :
             log.info("%s mimetype is '%s' which is not a supported video format (%s)" %(entry, mimetype, SUPPORTED_FORMATS))
     return files
