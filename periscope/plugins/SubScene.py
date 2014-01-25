@@ -84,7 +84,7 @@ class SubScene(SubtitleDatabase.SubtitleDB):
 			traceback.print_exc()
 			return []
 			
-	def createFile(self, subtitle):
+	def createFile(self, subtitle, lang_in_name=False):
 		'''pass the URL of the sub and the file it matches, will unzip it
 		and return the path to the created file'''
 		subpage = subtitle["page"]
@@ -104,6 +104,7 @@ class SubScene(SubtitleDatabase.SubtitleDB):
 			for el in zf.infolist():
 				extension = el.orig_filename.rsplit(".", 1)[1]
 				if extension in ("srt", "sub", "txt"):
+          if lang_in_name: srtbasefilename += "." + subtitle["lang"]
 					subtitlefilename = srtbasefilename + "." + extension
 					outfile = open(subtitlefilename, "wb")
 					outfile.write(zf.read(el.orig_filename))

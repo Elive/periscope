@@ -101,26 +101,9 @@ class Periscope:
         self.config.write(configfile)
         configfile.close()
 
-    def get_preferedNaming(self):
-        ''' Get the prefered naming convention from the config file '''
-        try:
-            lang_in_name = self.config.getboolean("DEFAULT", "lang-in-name")
-            log.info("lang-in-name read from config: " + str(lang_in_name))
-        except ValueError:
-            lang_in_name = False
-        return lang_in_name
-
-    def set_preferedNaming(self, lang_in_name):
-        ''' Update the config file to set the prefered naming convention '''
-        self.config.set('DEFAULT', 'lang-in-name', 'yes' if lang_in_name else 'no')
-        configfile = open(self.config_file, "w")
-        self.config.write(configfile)
-        configfile.close()
-
     # Getter/setter for the property preferedLanguages
     preferedLanguages = property(get_preferedLanguages, set_preferedLanguages)
     preferedPlugins = property(get_preferedPlugins, set_preferedPlugins)
-    preferedNaming = property(get_preferedNaming, set_preferedNaming)
 
     def deactivatePlugin(self, pluginName):
         ''' Remove a plugin from the list '''
@@ -206,27 +189,38 @@ class Periscope:
 
         return None #Could not find subtitles
 
-    def downloadSubtitle(self, filename, langs=None, interactive=False):
+    def downloadSubtitle(self, filename, langs=None, interactive=False, lang_in_name=False):
         ''' Takes a filename and a language and creates ONE subtitle through plugins if interactive == True asks before downloading'''
         subtitles = self.listSubtitles(filename, langs)
         if subtitles:
             log.debug("All subtitles: ")
             log.debug(subtitles)    
-            return self.attemptDownloadSubtitle(subtitles, langs, interactive)
+            return self.attemptDownloadSubtitle(subtitles, langs, interactive, lang_in_name)
         else:
             return None
         
         
-    def attemptDownloadSubtitle(self, subtitles, langs, interactive=False):
+    def attemptDownloadSubtitle(self, subtitles, langs, interactive=False, lang_in_name=False):
         subtitle = self.selectBestSubtitle(subtitles, langs, interactive)
         if subtitle:
             log.info("Trying to download subtitle: %s" %subtitle['link'])
             #Download the subtitle
             try:
-                subpath = subtitle["plugin"].createFile(subtitle)
+                subpath = subtitle["plugin"].createFile(subtitle, lang_in_name)
                 if subpath:
                     subtitle["subtitlepath"] = subpath
-                    return subtitle
+                    if lang_in_name:
+                        remaining_langs= [x for x in langs if x != subtitle["lang"]]
+                        #remaining_langs = []
+                        if not remaining_langs:
+                            return [subtitle]
+                        else:
+                            log.info("OK")
+                            multiple = self.attemptDownloadSubtitle(subtitles, remaining_langs, interactive, lang_in_name)
+                            log.info(multiple)
+                            return [subtitle] + multiple
+                    else:
+                        return [subtitle]
                 else:
                     # throw exception to remove it
                     raise Exception("Not downloaded")
@@ -238,7 +232,7 @@ class Periscope:
                 etb = traceback.extract_tb(sys.exc_info()[2])
                 log.error("Type[%s], Message [%s], Traceback[%s]" % (etype,evalue,etb))
                 subtitles.remove(subtitle)
-                return self.attemptDownloadSubtitle(subtitles, langs)
+                return self.attemptDownloadSubtitle(subtitles, langs, interactive, lang_in_name)
         else :
             log.error("No subtitles could be chosen.")
             return None

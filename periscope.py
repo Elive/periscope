@@ -41,6 +41,8 @@ def main():
     parser.add_option("--quiet", action="store_true", dest="quiet", help="run in quiet mode (only show warn and error messages)")
     parser.add_option("--debug", action="store_true", dest="debug", help="set the logging level to debug")
     (options, args) = parser.parse_args()
+
+    print "test"
     
     if not args:
         print parser.print_help()

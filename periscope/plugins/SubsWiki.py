@@ -118,12 +118,13 @@ class SubsWiki(SubtitleDatabase.SubtitleDB):
             teams += t.split(sep)
         return teams
 
-    def createFile(self, subtitle):
+    def createFile(self, subtitle, lang_in_name=False):
         '''pass the URL of the sub and the file it matches, will unzip it
         and return the path to the created file'''
         suburl = subtitle["link"]
         videofilename = subtitle["filename"]
         srtbasefilename = videofilename.rsplit(".", 1)[0]
+        if lang_in_name: srtbasefilename += "." + subtitle["lang"]
         srtfilename = srtbasefilename +".srt"
         self.downloadFile(suburl, srtfilename)
         return srtfilename

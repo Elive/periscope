@@ -18,7 +18,6 @@
 #    along with periscope; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-
 import os
 import shutil
 import mimetypes
@@ -48,7 +47,6 @@ def main():
     parser.add_option("--quiet", action="store_true", dest="quiet", help="run in quiet mode (only show warn and error messages)")
     parser.add_option("--debug", action="store_true", dest="debug", help="set the logging level to debug")
     (options, args) = parser.parse_args()
-
 
     # process args
     if options.debug :
@@ -103,20 +101,12 @@ def main():
             langs = periscope_client.preferedLanguages
         else:
             langs = options.langs
-        sub = periscope_client.downloadSubtitle(arg, langs, options.interactive)
-        if sub:
-            subs.append(sub)
-
-    if options.lang_in_name is None:
-        lang_in_name = periscope_client.preferedNaming
-    else:
-        lang_in_name = options.lang_in_name
-
-    if lang_in_name:
-        for s in subs:
-            new_name = "%s.%s%s" % (os.path.splitext(s['subtitlepath'])[0], s['lang'], os.path.splitext(s['subtitlepath'])[1])
-            shutil.move(s['subtitlepath'], new_name)
-            s['subtitlepath'] = new_name
+        sub_a = periscope_client.downloadSubtitle(arg, langs, options.interactive, options.lang_in_name)
+        log.info(sub_a)
+        for sub in sub_a:
+            log.info(sub["lang"])
+            if sub:
+                subs.append(sub)
 
     log.info("*"*50)
     log.info("Downloaded %s subtitles" %len(subs))
@@ -141,7 +131,7 @@ def recursive_search(entry, options):
         if mimetype in SUPPORTED_FORMATS:
             # Add it to the list only if there is not already one (or forced)
             basepath = os.path.splitext(entry)[0]
-            if options.force_download or not (os.path.exists(basepath+'.srt') or os.path.exists(basepath + '.sub')):
+            if options.force_download or not (os.path.exists(basepath + '.srt') or os.path.exists(basepath + '.sub')):
                 files.append(os.path.normpath(entry))
             else:
                 log.info("Skipping file %s as it already has a subtitle. Use the --force option to force the download" % entry)
