@@ -40,6 +40,7 @@ def main():
     parser.add_option("-f", "--force", action="store_true", dest="force_download", help="force download of a subtitle even there is already one present")
     parser.add_option("-i", "--interactive", action="store_true", dest="interactive", help="ask which subtitle to download")
     parser.add_option("-q", "--query", action="append", dest="queries", help="query to send to the subtitles website")
+    parser.add_option("-r", "--recursive", action="store_true", dest="recursive", help="Search video file recursively")
     parser.add_option("--lang-in-name", action="store_true", dest='lang_in_name', help="append lang to subtitle filename")
     parser.add_option("--cache-folder", action="store", type="string", dest="cache_folder", help="location of the periscope cache/config folder (default is ~/.config/periscope)")
     parser.add_option("--list-plugins", action="store_true", dest="show_plugins", help="list all plugins supported by periscope")
@@ -122,7 +123,7 @@ def recursive_search(entry, options):
         langs = options.langs
 
     files = []
-    if os.path.isdir(entry):
+    if os.path.isdir(entry) and options.recursive:
         #TODO if hidden folder, don't keep going (how to handle windows/mac/linux ?)
         for e in os.listdir(entry):
             files += recursive_search(os.path.join(entry, e), options)
