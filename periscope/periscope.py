@@ -192,7 +192,6 @@ class Periscope:
     def downloadSubtitle(self, filename, langs=None, interactive=False, lang_in_name=False):
         ''' Takes a filename and a language and creates ONE subtitle through plugins if interactive == True asks before downloading'''
         subtitles = self.listSubtitles(filename, langs)
-        log.info(subtitles)
         if subtitles:
             log.debug("All subtitles: ")
             log.debug(subtitles)    
@@ -203,7 +202,6 @@ class Periscope:
         
     def attemptDownloadSubtitle(self, subtitles, langs, interactive=False, lang_in_name=False):
         subtitle = self.selectBestSubtitle(subtitles, langs, interactive)
-        log.info(subtitles)
         if subtitle:
             log.info("Trying to download subtitle: %s" %subtitle['link'])
             #Download the subtitle
@@ -212,15 +210,11 @@ class Periscope:
                 if subpath:
                     subtitle["subtitlepath"] = subpath
                     if lang_in_name:
-                        log.info(subtitle)
-                        log.info(langs)
                         remaining_langs= [x for x in langs if x != subtitle["lang"]]
-                        #remaining_langs = []
                         if not remaining_langs:
                             return [subtitle]
                         else:
                             multiple = self.attemptDownloadSubtitle(subtitles, remaining_langs, interactive, lang_in_name)
-                            log.info(multiple)
                             return [subtitle] + multiple
                     else:
                         return [subtitle]
