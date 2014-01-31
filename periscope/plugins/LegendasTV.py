@@ -77,7 +77,8 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
         ''' main method to call on the plugin, pass the filename and the wished
         languages and it will query the subtitles source '''
         if not self.user or self.user == "":
-            log.error("LegendasTV requires a personnal username/password. Set one up in your ~/.config/periscope/config file")
+            #log.error("LegendasTV requires a personnal username/password. Set one up in your ~/.config/periscope/config file")
+            log.info("skipping LegendasTV, bacause it requires a personnal username/password. Set one up in your ~/.config/periscope/config file")
             return []
         arquivo = self.getFileName(filepath)
         dados = {}
