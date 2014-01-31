@@ -104,7 +104,7 @@ class SubScene(SubtitleDatabase.SubtitleDB):
 			for el in zf.infolist():
 				extension = el.orig_filename.rsplit(".", 1)[1]
 				if extension in ("srt", "sub", "txt"):
-          if lang_in_name: srtbasefilename += "." + subtitle["lang"]
+                                        if lang_in_name: srtbasefilename += "." + subtitle["lang"]
 					subtitlefilename = srtbasefilename + "." + extension
 					outfile = open(subtitlefilename, "wb")
 					outfile.write(zf.read(el.orig_filename))
