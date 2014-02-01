@@ -84,7 +84,7 @@ class Podnapisi(SubtitleDatabase.SubtitleDB):
         content = content.replace("scr'+'ipt", "script")
         soup = BeautifulSoup(content)
         for subs in soup("tr", {"class":"a"}) + soup("tr", {"class": "b"}):
-            details = subs.find("span", {"class" : "opis"}).findAll("b")
+            details = subs.findAll("span", {"class" : "opis"})[1].findAll("b")
             if guessedData["type"] == "tvshow" and guessedData["season"] == int(details[0].text) and guessedData["episode"] == int(details[1].text):
                 links = subs.findAll("a")
                 lng = subs.find("a").find("img")["src"].rsplit("/", 1)[1][:-4]
