@@ -230,8 +230,7 @@ class Periscope:
                 log.error("Type[%s], Message [%s], Traceback[%s]" % (etype,evalue,etb))
                 subtitles.remove(subtitle)
                 return self.attemptDownloadSubtitle(subtitles, langs, interactive, lang_in_name)
-        else :
-            log.error("No subtitles could be chosen.")
+        else:
             return [None]
 
     def guessFileData(self, filename):
