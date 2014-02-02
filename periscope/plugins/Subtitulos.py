@@ -83,7 +83,10 @@ class Subtitulos(SubtitleDatabase.SubtitleDB):
                 lang = self.getLG(langLI.find("strong").contents[0].string.strip())
         
                 statusLI = lang_html.findNext("li",{"class":"li-estado green"} )
-                status = statusLI.contents[0].string.strip()
+                if statusLI == None:
+                    continue
+                else:
+                    status = statusLI.contents[0].string.strip()
 
                 link = statusLI.findNext("span", {"class":"descargar green"}).find("a")["href"]
                 if status == "Completado" and subteams.issubset(teams) and (not langs or lang in langs) :
