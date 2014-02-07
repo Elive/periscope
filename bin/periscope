@@ -56,7 +56,7 @@ def main():
     elif options.quiet :
         logging.basicConfig(level=logging.WARN)
     elif options.cron :
-        logging.basicConfig(level=logging.ERROR)
+        logging.basicConfig(level=logging.CRITICAL)
     else :
         logging.basicConfig(level=logging.INFO)
 
