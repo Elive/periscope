@@ -236,7 +236,7 @@ class Periscope:
                             return [subtitle] + multiple
                     else:
                         return [subtitle]
-                else:
+                #else:
                     # throw exception to remove it
                     #raise Exception("Not downloaded")
             except Exception as inst:
