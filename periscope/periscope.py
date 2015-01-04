@@ -27,7 +27,8 @@ from Queue import Queue
 
 import traceback
 import ConfigParser
-
+import socket
+socket.setdefaulttimeout(60)
 log = logging.getLogger(__name__)
 
 try:
@@ -101,9 +102,26 @@ class Periscope:
         self.config.write(configfile)
         configfile.close()
 
+    def get_preferedNaming(self):
+        ''' Get the prefered naming convention from the config file '''
+        try:
+            lang_in_name = self.config.getboolean("DEFAULT", "lang-in-name")
+            log.info("lang-in-name read from config: " + str(lang_in_name))
+        except ValueError:
+            lang_in_name = False
+        return lang_in_name
+
+    def set_preferedNaming(self, lang_in_name):
+        ''' Update the config file to set the prefered naming convention '''
+        self.config.set('DEFAULT', 'lang-in-name', 'yes' if lang_in_name else 'no')
+        configfile = open(self.config_file, "w")
+        self.config.write(configfile)
+        configfile.close()
+
     # Getter/setter for the property preferedLanguages
     preferedLanguages = property(get_preferedLanguages, set_preferedLanguages)
     preferedPlugins = property(get_preferedPlugins, set_preferedPlugins)
+    preferedNaming = property(get_preferedNaming, set_preferedNaming)
 
     def deactivatePlugin(self, pluginName):
         ''' Remove a plugin from the list '''
@@ -130,7 +148,7 @@ class Periscope:
         #if not os.path.isfile(filename):
             #raise InvalidFileException(filename, "does not exist")
 
-        log.info("Searching subtitles for %s with langs %s" %(filename, langs))
+        log.info("Searching subtitles for %s with langs %s" %(os.path.basename(filename), langs))
         subtitles = []
         q = Queue()
         for name in self.pluginNames:
@@ -220,7 +238,7 @@ class Periscope:
                         return [subtitle]
                 else:
                     # throw exception to remove it
-                    raise Exception("Not downloaded")
+                    #raise Exception("Not downloaded")
             except Exception as inst:
                 # Could not download that subtitle, remove it
                 log.warn("Subtitle %s could not be downloaded, trying the next on the list" %subtitle['link'])
