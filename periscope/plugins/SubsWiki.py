@@ -17,7 +17,7 @@
 #    along with periscope; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import zipfile, os, urllib2, urllib, logging, traceback, httplib, re
+import zipfile, os, urllib2, urllib, logging, traceback, httplib, re, socket
 from BeautifulSoup import BeautifulSoup
 
 import SubtitleDatabase
@@ -67,10 +67,10 @@ class SubsWiki(SubtitleDatabase.SubtitleDB):
             ''' test if no redirect was made '''
             if page.geturl() != searchurl :
                 return sublinks
-        except urllib2.HTTPError as inst:
-            logging.debug("Error : %s for %s" % (searchurl, inst))
+        except (urllib2.HTTPError, urllib2.URLError, socket.timeout) as inst:
+            logging.warning("Error : %s for %s" % (searchurl, inst))
             return sublinks
-        
+
         soup = BeautifulSoup(page)
         for subs in soup("td", {"class":"NewsTitle"}):
             subteams = subs.findNext("b").string.lower()            
