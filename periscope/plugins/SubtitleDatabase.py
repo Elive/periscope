@@ -17,7 +17,7 @@
 #    along with periscope; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import os, shutil, urllib2, sys, logging, traceback, zipfile
+import os, shutil, urllib2, sys, logging, traceback, zipfile, socket
 import struct
 import socket # For timeout purposes
 import re
@@ -106,6 +106,8 @@ class SubtitleDB(object):
             log.warning("HTTP Error: %s - %s" % (e.code, url))
         except urllib2.URLError, e:
             log.warning("URL Error: %s - %s" % (e.reason, url))
+        except socket.timeout, e:
+            log.warming("Connection timeout %s - %s" %(e.reason, url))
 
     def downloadFile(self, url, filename):
         ''' Downloads the given url to the given filename '''
