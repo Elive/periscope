@@ -24,6 +24,8 @@ import mimetypes
 from optparse import OptionParser
 import logging
 
+import threading
+
 import sys
 sys.path.insert(0, os.path.dirname(__file__)+"/..")
 import periscope
@@ -31,6 +33,15 @@ import periscope
 log = logging.getLogger(__name__)
 
 SUPPORTED_FORMATS = 'video/x-msvideo', 'video/quicktime', 'video/x-matroska', 'video/mp4'
+
+class functor:
+    def __init__(self, f, params):
+        self.f = f
+        self.params = params
+        self.return_value = None
+
+    def run(self):
+        self.return_value = self.f(*self.params)
 
 def main():
     '''Download subtitles'''
@@ -76,21 +87,21 @@ def main():
     periscope_client = periscope.Periscope(options.cache_folder)
 
     if options.show_active_plugins:
-        print "Active plugins: "
+        print("Active plugins: ")
         plugins = periscope_client.listActivePlugins()
         for plugin in plugins:
-            print "%s" %(plugin)
+            print("%s" %(plugin))
         exit()
 
     if options.show_plugins:
-        print "All plugins: "
+        print ("All plugins: ")
         plugins = periscope_client.listExistingPlugins()
         for plugin in plugins:
-            print "%s" %(plugin)
+            print ("%s" %(plugin))
         exit()
 
     if not args:
-        print parser.print_help()
+        print (parser.print_help())
         exit()
 
     if options.queries: args += options.queries
@@ -99,10 +110,24 @@ def main():
         videos += recursive_search(arg, options)
 
     subs = []
+    threads = []
+    downloaders = []
+
     for arg in videos:
         movie = arg["movie"]
         langs = arg["langs"]
-        sub_a = periscope_client.downloadSubtitle(movie, langs, options.interactive, options.lang_in_name)
+        downloaders.append(functor(periscope_client.downloadSubtitle, (movie, langs, options.interactive, options.lang_in_name)))
+        threads.append(threading.Thread(target=downloaders[-1].run))
+
+    for thread in threads: 
+        thread.start()
+        log.info("Starting thread " + str(thread))
+    
+    for thread in threads:
+        thread.join()
+
+    for dl in downloaders:
+        sub_a = dl.return_value
         for sub in sub_a:
             if sub:
                 subs.append(sub)
