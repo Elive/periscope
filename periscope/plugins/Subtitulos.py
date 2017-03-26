@@ -88,7 +88,12 @@ class Subtitulos(SubtitleDatabase.SubtitleDB):
                 else:
                     status = statusLI.contents[0].string.strip()
 
-                link = statusLI.findNext("span", {"class":"descargar green"}).find("a")["href"]
+                class_object = statusLI.findNext("span", {"class":"descargar green"})
+                
+                if not class_object:
+                    continue
+                
+                link = class_object.find("a")["href"]
                 if status == "Completado" and subteams.issubset(teams) and (not langs or lang in langs) :
                     result = {}
                     result["release"] = "%s.S%.2dE%.2d.%s" %(name.replace("-", ".").title(), int(season), int(episode), '.'.join(subteams))
