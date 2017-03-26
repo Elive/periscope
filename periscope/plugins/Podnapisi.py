@@ -85,19 +85,20 @@ class Podnapisi(SubtitleDatabase.SubtitleDB):
         soup = BeautifulSoup(content)
         for subs in soup("tr", {"class":"a"}) + soup("tr", {"class": "b"}):
             details = subs.find("span", {"class" : "opis"}).findAll("b")
-            if guessedData["type"] == "tvshow" and guessedData["season"] == int(details[0].text) and guessedData["episode"] == int(details[1].text):
-                links = subs.findAll("a")
-                lng = subs.find("a").find("img")["src"].rsplit("/", 1)[1][:-4]
-                if langs and not self.getLG(lng) in langs:
-                    continue # The lang of this sub is not wanted => Skip
-                pagelink = subs.findAll("a")[1]["href"]
-                result = {}
-                result["link"] = None # We'll find the link later using the page
-                # some url are in unicode but urllib.quote() doesn't handle it
-                # well : http://bugs.python.org/issue1712522
-                result["page"] = self.host + urllib.quote(pagelink.encode("utf-8"))
-                result["lang"] = self.getLG(lng)
-                sublinks.append(result)
+            if len(details):
+                if guessedData["type"] == "tvshow" and guessedData["season"] == int(details[0].text) and guessedData["episode"] == int(details[1].text):
+                    links = subs.findAll("a")
+                    lng = subs.find("a").find("img")["src"].rsplit("/", 1)[1][:-4]
+                    if langs and not self.getLG(lng) in langs:
+                        continue # The lang of this sub is not wanted => Skip
+                    pagelink = subs.findAll("a")[1]["href"]
+                    result = {}
+                    result["link"] = None # We'll find the link later using the page
+                    # some url are in unicode but urllib.quote() doesn't handle it
+                    # well : http://bugs.python.org/issue1712522
+                    result["page"] = self.host + urllib.quote(pagelink.encode("utf-8"))
+                    result["lang"] = self.getLG(lng)
+                    sublinks.append(result)
 
         log.debug(sublinks)
         return sublinks

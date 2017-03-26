@@ -65,7 +65,7 @@ class TheSubDB(SubtitleDatabase.SubtitleDB):
             page = urllib2.urlopen(req, timeout=5)
             content = page.readlines()
             plugin_langs = content[0].split(',')
-            print content[0]
+            #print content[0]
             for lang in plugin_langs :
                 if not langs or lang in langs:
                     result = {}
@@ -92,12 +92,14 @@ class TheSubDB(SubtitleDatabase.SubtitleDB):
             data += f.read(readsize)
         return hashlib.md5(data).hexdigest()
             
-    def createFile(self, subtitle):
+    def createFile(self, subtitle, lang_in_name=False):
         '''pass the URL of the sub and the file it matches, will unzip it
         and return the path to the created file'''
         suburl = subtitle["link"]
         videofilename = subtitle["filename"]
-        srtfilename = videofilename.rsplit(".", 1)[0] + '.srt'
+        srtfilename = videofilename.rsplit(".", 1)[0]
+        if lang_in_name: srtfilename += "." + subtitle["lang"]
+        srtfilename += ".srt"
         self.downloadFile(suburl, srtfilename)
         return srtfilename
 

@@ -83,7 +83,10 @@ class Subtitulos(SubtitleDatabase.SubtitleDB):
                 lang = self.getLG(langLI.find("strong").contents[0].string.strip())
         
                 statusLI = lang_html.findNext("li",{"class":"li-estado green"} )
-                status = statusLI.contents[0].string.strip()
+                if statusLI == None:
+                    continue
+                else:
+                    status = statusLI.contents[0].string.strip()
 
                 link = statusLI.findNext("span", {"class":"descargar green"}).find("a")["href"]
                 if status == "Completado" and subteams.issubset(teams) and (not langs or lang in langs) :
@@ -109,12 +112,13 @@ class Subtitulos(SubtitleDatabase.SubtitleDB):
             teams += t.split(sep)
         return teams
 
-    def createFile(self, subtitle):
+    def createFile(self, subtitle, lang_in_name=False):
         '''pass the URL of the sub and the file it matches, will unzip it
         and return the path to the created file'''
         suburl = subtitle["link"]
         videofilename = subtitle["filename"]
         srtbasefilename = videofilename.rsplit(".", 1)[0]
+        if lang_in_name: srtbasefilename += "." + subtitle["lang"]
         srtfilename = srtbasefilename +".srt"
         self.downloadFile(suburl, srtfilename)
         return srtfilename

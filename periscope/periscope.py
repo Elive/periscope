@@ -27,7 +27,8 @@ from Queue import Queue
 
 import traceback
 import ConfigParser
-
+import socket
+socket.setdefaulttimeout(60)
 log = logging.getLogger(__name__)
 
 try:
@@ -146,7 +147,7 @@ class Periscope:
         #if not os.path.isfile(filename):
             #raise InvalidFileException(filename, "does not exist")
 
-        log.info("Searching subtitles for %s with langs %s" %(filename, langs))
+        log.info("Searching subtitles for %s with langs %s" %(os.path.basename(filename), langs))
         subtitles = []
         q = Queue()
         for name in self.pluginNames:
@@ -205,30 +206,38 @@ class Periscope:
 
         return None #Could not find subtitles
 
-    def downloadSubtitle(self, filename, langs=None, interactive=False):
+    def downloadSubtitle(self, filename, langs=None, interactive=False, lang_in_name=False):
         ''' Takes a filename and a language and creates ONE subtitle through plugins if interactive == True asks before downloading'''
         subtitles = self.listSubtitles(filename, langs)
         if subtitles:
             log.debug("All subtitles: ")
             log.debug(subtitles)    
-            return self.attemptDownloadSubtitle(subtitles, langs, interactive)
+            return self.attemptDownloadSubtitle(subtitles, langs, interactive, lang_in_name)
         else:
-            return None
+            return [None]
         
         
-    def attemptDownloadSubtitle(self, subtitles, langs, interactive=False):
+    def attemptDownloadSubtitle(self, subtitles, langs, interactive=False, lang_in_name=False):
         subtitle = self.selectBestSubtitle(subtitles, langs, interactive)
         if subtitle:
             log.info("Trying to download subtitle: %s" %subtitle['link'])
             #Download the subtitle
             try:
-                subpath = subtitle["plugin"].createFile(subtitle)
+                subpath = subtitle["plugin"].createFile(subtitle, lang_in_name)
                 if subpath:
                     subtitle["subtitlepath"] = subpath
-                    return subtitle
-                else:
+                    if lang_in_name:
+                        remaining_langs= [x for x in langs if x != subtitle["lang"]]
+                        if not remaining_langs:
+                            return [subtitle]
+                        else:
+                            multiple = self.attemptDownloadSubtitle(subtitles, remaining_langs, interactive, lang_in_name)
+                            return [subtitle] + multiple
+                    else:
+                        return [subtitle]
+                #else:
                     # throw exception to remove it
-                    raise Exception("Not downloaded")
+                    #raise Exception("Not downloaded")
             except Exception as inst:
                 # Could not download that subtitle, remove it
                 log.warn("Subtitle %s could not be downloaded, trying the next on the list" %subtitle['link'])
@@ -237,10 +246,9 @@ class Periscope:
                 etb = traceback.extract_tb(sys.exc_info()[2])
                 log.error("Type[%s], Message [%s], Traceback[%s]" % (etype,evalue,etb))
                 subtitles.remove(subtitle)
-                return self.attemptDownloadSubtitle(subtitles, langs)
-        else :
-            log.error("No subtitles could be chosen.")
-            return None
+                return self.attemptDownloadSubtitle(subtitles, langs, interactive, lang_in_name)
+        else:
+            return [None]
 
     def guessFileData(self, filename):
         subdb = plugins.SubtitleDatabase.SubtitleDB(None)
