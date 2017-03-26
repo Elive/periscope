@@ -30,12 +30,12 @@ subfname = filename[:-3]+"srt"
 logging.info("Processing %s" % filename)
 subs = p.process(filename, ["en", "pt"])
 
-print subs
+print(subs)
 
 if not subs:
     p.uploadFile(filename, subfname, 'en')
     subs = p.process(filename, ["en", "pt"])
-    print subs
+    print(subs))
 
 
 #bd = BierDopje.BierDopje()

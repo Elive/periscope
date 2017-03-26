@@ -347,7 +347,7 @@ class OpenSubtitles(SubtitleDatabase.SubtitleDB):
         #TODO add also support for subtitles release
         xmatch = x['MovieReleaseName'] and (x['MovieReleaseName'].find(self.filename)>-1 or self.filename.find(x['MovieReleaseName'])>-1)
         ymatch = y['MovieReleaseName'] and (y['MovieReleaseName'].find(self.filename)>-1 or self.filename.find(y['MovieReleaseName'])>-1)
-        #print "analyzing %s and %s = %s and %s" %(x['MovieReleaseName'], y['MovieReleaseName'], xmatch, ymatch)
+        #print("analyzing %s and %s = %s and %s" %(x['MovieReleaseName'], y['MovieReleaseName'], xmatch, ymatch))
         if xmatch and ymatch:
             if x['MovieReleaseName'] == self.filename or x['MovieReleaseName'].startswith(self.filename) :
                 return -1

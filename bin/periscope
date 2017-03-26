@@ -94,14 +94,14 @@ def main():
         exit()
 
     if options.show_plugins:
-        print ("All plugins: ")
+        print("All plugins: ")
         plugins = periscope_client.listExistingPlugins()
         for plugin in plugins:
-            print ("%s" %(plugin))
+            print("%s" %(plugin))
         exit()
 
     if not args:
-        print (parser.print_help())
+        print(parser.print_help())
         exit()
 
     if options.queries: args += options.queries

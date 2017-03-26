@@ -76,21 +76,21 @@ class Podnapisi(SubtitleDatabase.SubtitleDB):
         hash.update(password)
         hash.update(nonce)
         password = hash.hexdigest()
-        print username
-        print password
+        print(username)
+        print(password)
         self.server.authenticate(token, username, password)
         #self.server.authenticate(token, '', '')
         logging.debug("Authenticated. Starting search")
         results = self.server.search(token, [moviehash])
-        print "Results are %s" %results
+        print("Results are %s" %results)
         subs = []
         for sub in results['results']:
             subs.append(sub)
-            print sub
+            print(sub)
             
-        print "Try a download"
+        print("Try a download")
         d = self.server.download(token, [173793])
-        print d
+        print(d)
         self.server.terminate(token)
         return subs
         

@@ -29,7 +29,7 @@ class TVShowRegexTestCase(unittest.TestCase):
         subdb = OpenSubtitles.OpenSubtitles()
         filenames = ('Futurama.S06E05.HDTV.XviD-aAF.avi', 'Parenthood.2010.S01E13.Lost.and.Found.HDTV.XviD-FQM.avi')
         for filename in filenames:
-            print "%s => %s" %(filename, subdb.guessFileData(filename))
+            print("%s => %s" %(filename, subdb.guessFileData(filename)))
 
 
 class RegexTestCase(unittest.TestCase):
@@ -40,7 +40,7 @@ class RegexTestCase(unittest.TestCase):
         #filenames = ('The.Hurt.Locker.2008.DVDRiP.XViD.CD1', 'Catwoman.CAM-NOX-CD2.avi','Marley & Me.2008-L33t-DvDRiP.DivX.NoRaR')
         filenames = ('Catwoman.CAM-NOX-CD2.avi', 'Funny People (2009) DVDRip XviD-MAXSPEED www.torentz.3xforum.ro')
         for filename in filenames:
-            print "%s => %s" %(filename, subdb.guessFileData(filename))
+            print("%s => %s" %(filename, subdb.guessFileData(filename)))
 
 class SubtitulosTestCase(unittest.TestCase):
     def runTest(self):
@@ -49,11 +49,11 @@ class SubtitulosTestCase(unittest.TestCase):
         fname = "CSI.S10E13.HDTV.XvID-FQM.avi"
         fname = "rubicon.s01e01.repack.hdtv.xvid-fqm.avi"
         guessedData = subdb.guessFileData(fname)
-        print fname
-        print guessedData
+        print(fname)
+        print(guessedData)
         if guessedData['type'] == 'tvshow':
             subs = subdb.query(guessedData['name'], guessedData['season'], guessedData['episode'], guessedData['teams'])
-            print subs
+            print(subs)
 
 class Addic7edTestCase(unittest.TestCase):
     def runTest(self):
@@ -61,11 +61,11 @@ class Addic7edTestCase(unittest.TestCase):
         subdb = Addic7ed.Addic7ed()
         fname = "The.Big.Bang.Theory.S03E13.HDTV.XviD-2HD"
         guessedData = subdb.guessFileData(fname)
-        print fname
-        print guessedData
+        print(fname)
+        print(guessedData)
         if guessedData['type'] == 'tvshow':
             subs = subdb.query(guessedData['name'], guessedData['season'], guessedData['episode'], guessedData['teams'])
-            print subs
+            print(subs)
 
 class Addic7edTestCase(unittest.TestCase):
     def runTest(self):
@@ -74,11 +74,11 @@ class Addic7edTestCase(unittest.TestCase):
         #fname = "rubicon.s01e01.repack.hdtv.xvid-fqm.avi"
         fname = "24.1x03.2.00.am_3.00.am.ac3.dvdrip_ws_xvid-fov.avi"
         guessedData = subdb.guessFileData(fname)
-        print fname
-        print guessedData
+        print(fname)
+        print(guessedData)
         if guessedData['type'] == 'tvshow':
             subs = subdb.query(guessedData['name'], guessedData['season'], guessedData['episode'], guessedData['teams'])
-            print subs
+            print(subs)
 
 class OpenSubtitlesTestCase(unittest.TestCase):
     def runTest(self):
@@ -95,7 +95,7 @@ class OpenSubtitlesTestCase(unittest.TestCase):
         subdb = OpenSubtitles.OpenSubtitles()
         # movie hash if for night watch : http://trac.opensubtitles.org/projects/opensubtitles/wiki/XMLRPC
         results = subdb.process('/burn/The.Office.US.S07E08.Viewing.Party.HDTV.XviD-FQM.[VTV].avi', None)
-        print results
+        print(results)
         assert len(results) > 0, 'No result found for Night.Watch.2004.CD1.DVDRiP.XViD-FiCO.avi by movie hash'
 
 class OpenSubtitlesTestCaseFileName(unittest.TestCase):
@@ -113,9 +113,9 @@ class OpenSubtitlesTestCaseFileName(unittest.TestCase):
             results = subdb.query(filename)
         
             if results :
-                print "Found %s results" %len(results)
-                print "Showing first for unit test::"
-                print results[0]
+                print("Found %s results" %len(results))
+                print("Showing first for unit test::")
+                print(results[0])
             assert len(results) > 0, 'No result found for %s' %filename
 
 class SubtitleSourceTestCase(unittest.TestCase):
@@ -123,7 +123,7 @@ class SubtitleSourceTestCase(unittest.TestCase):
         import SubtitleSource
         subdb = SubtitleSource.SubtitleSource()
         results = subdb.query("PrisM-Inception.2010")
-        print results
+        print(results)
         assert len(results) > 0, "No result could be found for Heroes 3X9 and no languages"
 
 class SubtitleSourceTestCase2(unittest.TestCase):
@@ -152,7 +152,7 @@ class SubSceneTestCase(unittest.TestCase):
         import SubScene
         subdb = SubScene.SubScene()
         results = subdb.query("Dexter.S04E01.HDTV.XviD-NoTV")
-        print results
+        print(results)
         assert len(results) > 0, "No result could be found for Dexter.S04E01.HDTV.XviD-NoTV and no languages"
 
 class SubSceneStep2TestCase(unittest.TestCase):
@@ -171,7 +171,7 @@ class SubSceneStep3TestCase(unittest.TestCase):
         suburl = "http://subscene.com/arabic/Dexter-Fourth-Season/subtitle-263042.aspx"
         localFile = "/tmp/testSubScene.zip"
         subdb.downloadFile(suburl, localFile)
-        print os.path.getsize(localFile)
+        print(os.path.getsize(localFile))
         assert srtfilename != None, "Could download a subtitle"
 
 class Podnapisi2TestCase(unittest.TestCase):
@@ -179,7 +179,7 @@ class Podnapisi2TestCase(unittest.TestCase):
         import Podnapisi2
         subdb = Podnapisi2.Podnapisi()
         results = subdb.process("/burn/Entourage.S07E01.Stunted.HDTV.XviD-FQM.avi", None)
-        print results
+        print(results)
         assert len(results) > 5, "Not enough result could be found for The.Office.US.S06E01.HDTV.XviD-2HD and no languages (expected 6)"
 '''
 class PodnapisiTestCase(unittest.TestCase):
@@ -219,7 +219,7 @@ class TvSubtitlesTestCase(unittest.TestCase):
         guessedData = subdb.guessFileData(fname)
         subs = subdb.query(guessedData['name'], guessedData['season'], guessedData['episode'], guessedData['teams'], ['en'])
         for s in subs:
-            print "Sub : %s" %s
+            print("Sub : %s" %s)
 
 class BierDopjeTestCase(unittest.TestCase):
     def runTest(self):
@@ -230,7 +230,7 @@ class BierDopjeTestCase(unittest.TestCase):
         #video = "the.walking.dead.s01e02.720p.hdtv.x264-ctu"
         video = "the.mentalist.s01e06.720p.hdtv.x264-ctu"
         results = subdb.query(video)
-        print results
+        print(results)
         assert len(results) > 0, "No result could be found for %s and no languages" %( video )
 '''
 

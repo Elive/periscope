@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 #   This file is part of periscope.
@@ -192,7 +191,7 @@ class Periscope:
                         interactive_subtitles.append(sub)
             for i in range(len(interactive_subtitles)):
                 sub = interactive_subtitles[i]
-                print "[%d]: %s" % (i, sub["release"])
+                print("[%d]: %s" % (i, sub["release"]))
             sub = None
             while not sub:
                 try:
@@ -200,9 +199,9 @@ class Periscope:
                     if sub:
                         return sub
                 except IndexError:
-                    print "Invalid index"
+                    print("Invalid index")
                 except ValueError:
-                    print "Invalid value"
+                    print("Invalid value")
 
         return None #Could not find subtitles
 

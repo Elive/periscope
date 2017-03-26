@@ -118,7 +118,7 @@ class PeriscopeInvoker(Process):
 
     def run(self):
         subdl = periscope.Periscope(self.cache_folder)
-        print "prefered languages: %s" %subdl.preferedLanguages
+        print("prefered languages: %s" %subdl.preferedLanguages)
         for filename in self.filenames:
             subtitle = subdl.downloadSubtitle(filename, subdl.preferedLanguages)
             if subtitle:
