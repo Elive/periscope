@@ -27,7 +27,7 @@ class MenuProviderTestCase(unittest.TestCase):
 			dir(MenuProvider)
 			mp = MenuProvider.DownloadSubtitles()
 			mp.notify([{"filename": "a"}], [])
-		except Exception, e:
+		except Exception as e:
 			print(e)
 			self.fail("Could not notify")
 		

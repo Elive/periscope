@@ -68,7 +68,7 @@ class SubtitleSource(SubtitleDatabase.SubtitleDB):
                 return subs
             else:
                 return subs
-        except Exception, e:
+        except Exception as e:
             logging.error("Error raised by plugin %s: %s" %(self.__class__.__name__, e))
             traceback.print_exc()
             return []

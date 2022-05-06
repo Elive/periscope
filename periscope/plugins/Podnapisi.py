@@ -62,7 +62,7 @@ class Podnapisi(SubtitleDatabase.SubtitleDB):
                     subs_lang = self.query(teamless_filename, None)
                 subs += subs_lang
             return subs
-        except Exception, e:
+        except Exception as e:
             log.error("Error raised by plugin %s: %s" %(self.__class__.__name__, e))
             traceback.print_exc()
             return []

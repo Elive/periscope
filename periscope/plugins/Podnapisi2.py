@@ -59,7 +59,7 @@ class Podnapisi(SubtitleDatabase.SubtitleDB):
             logging.debug(log_result)
             token = log_result["session"]
             nonce = log_result["nonce"]
-        except Exception, e:
+        except Exception as e:
             logging.error("Podnapisi could not be contacted")
             socket.setdefaulttimeout(None)
             return []

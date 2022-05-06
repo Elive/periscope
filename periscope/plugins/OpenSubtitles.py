@@ -235,7 +235,7 @@ class OpenSubtitles(SubtitleDatabase.SubtitleDB):
         try:
             if search:
                 results = self.server.SearchSubtitles(token, [search])
-        except Exception, e:
+        except Exception as e:
             log.error("Could not query the server OpenSubtitles")
             log.debug(e)
             return []

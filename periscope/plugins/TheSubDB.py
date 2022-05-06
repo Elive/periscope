@@ -75,7 +75,7 @@ class TheSubDB(SubtitleDatabase.SubtitleDB):
                     result['page'] = result['link']
                     subs.append(result)
             return subs
-        except urllib2.HTTPError, e :
+        except urllib2.HTTPError as e :
             if e.code == 404 : # No result found
                 return subs
             else:
@@ -137,7 +137,7 @@ class TheSubDB(SubtitleDatabase.SubtitleDB):
         try : 
             page = urllib2.urlopen(req, data, timeout=5)
             log.debug(page.readlines())
-        except urllib2.HTTPError, e :
+        except urllib2.HTTPError as e :
             log.exception('Error occured while uploading : %s' % e)
             #log.info(fd.name)
             #log.info(fd.len)

@@ -170,7 +170,7 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
                 #log.debug(" Tentando logar no LegendasTV")
             except socket.timeout:
                 log.info(" Nao foi possivel pesquisar no LegendasTV - Timeout")
-            except IOError, e:
+            except IOError as e:
                 if hasattr(e, 'code') and hasattr(e, 'reason') and e.code in (500,501,502,503,504,404):
                     log.info(" LegendasTV nao disponivel. Nao foi possivel logar")
                     naodisponivel = True
@@ -251,7 +251,7 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
             ltv_sub = opener.open(download_url,timeout=10).read()
         except socket.timeout:
             log.info(" Nao foi possivel pesquisar no LegendasTV - Timeout")
-        except IOError, e:
+        except IOError as e:
             if hasattr(e, 'code') and hasattr(e, 'reason') and e.code in (500,501,502,503,504,404):
                 log.info(" LegendasTV nao disponivel. Nao foi possivel logar")
                 naodisponivel = True
@@ -469,7 +469,7 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
                 log.debug(" Nao houve resultados para a busca desse episodio")
         except socket.timeout:
             log.info(" Nao foi possivel pesquisar no LegendasTV - Timeout")
-        except IOError, e:
+        except IOError as e:
             if hasattr(e, 'code') and hasattr(e, 'reason') and e.code in (500,501,502,503,504,404):
                 log.info(" LegendasTV nao disponivel. Nao foi possivel logar")
                 naodisponivel = True
@@ -549,7 +549,7 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
                 except socket.timeout:
                     log.info(" Nao foi possivel pesquisar no LegendasTV - Timeout")
                     return sub1
-                except IOError, e:
+                except IOError as e:
                     if hasattr(e, 'code') and hasattr(e, 'reason') and e.code in (500,501,502,503,504,404):
                         log.info(" LegendasTV nao disponivel. Nao foi possivel logar")
                         naodisponivel = True
@@ -574,7 +574,7 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
                 except socket.timeout:
                     log.info(" Nao foi possivel pesquisar no LegendasTV - Timeout")
                     return sub1
-                except IOError, e:
+                except IOError as e:
                     if hasattr(e, 'code') and hasattr(e, 'reason') and e.code in (500,501,502,503,504,404):
                         log.info(" LegendasTV nao disponivel. Nao foi possivel logar")
                         naodisponivel = True
@@ -599,7 +599,7 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
                 except socket.timeout:
                     log.info(" Nao foi possivel pesquisar no LegendasTV - Timeout")
                     return sub1
-                except IOError, e:
+                except IOError as e:
                     if hasattr(e, 'code') and hasattr(e, 'reason') and e.code in (500,501,502,503,504,404):
                         log.info(" LegendasTV nao disponivel. Nao foi possivel logar")
                         naodisponivel = True
@@ -697,7 +697,7 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
                 log.debug(" Nao houve resultados para a busca desse episodio")
         except socket.timeout:
             log.info(" Nao foi possivel pesquisar no LegendasTV - Timeout")
-        except IOError, e:
+        except IOError as e:
             if hasattr(e, 'code') and hasattr(e, 'reason') and e.code in (500,501,502,503,504,404):
                 log.info(" LegendasTV nao disponivel. Nao foi possivel logar")
                 naodisponivel = True

@@ -261,7 +261,7 @@ class Periscope:
             for s in subs:
                 subtitles[s["lang"]].append(s)
             return subtitles
-        except ImportError, e: #Don't use Python 2.5
+        except ImportError as e: #Don't use Python 2.5
             subtitles = {}
             for s in subs:
                 # return subtitles[s["lang"]], if it does not exist, set it to [] and return it, then append the subtitle

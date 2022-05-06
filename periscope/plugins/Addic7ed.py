@@ -151,7 +151,7 @@ class Addic7ed(SubtitleDatabase.SubtitleDB):
 		suburl = subtitle["link"]
 		videofilename = subtitle["filename"]
 		srtbasefilename = videofilename.rsplit(".", 1)[0]
-                if lang_in_name: srtbasefilename += "." + subtitle["lang"]
+		if lang_in_name: srtbasefilename += "." + subtitle["lang"]
 		srtfilename = srtbasefilename +".srt"
 		self.downloadFile(suburl, srtfilename)
 		return srtfilename

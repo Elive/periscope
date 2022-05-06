@@ -79,7 +79,7 @@ class SubScene(SubtitleDatabase.SubtitleDB):
 				return subs
 			else:
 				return subs
-		except Exception, e:
+		except Exception as e:
 			logging.error("Error raised by plugin %s: %s" %(self.__class__.__name__, e))
 			traceback.print_exc()
 			return []
@@ -104,7 +104,7 @@ class SubScene(SubtitleDatabase.SubtitleDB):
 			for el in zf.infolist():
 				extension = el.orig_filename.rsplit(".", 1)[1]
 				if extension in ("srt", "sub", "txt"):
-                                        if lang_in_name: srtbasefilename += "." + subtitle["lang"]
+					if lang_in_name: srtbasefilename += "." + subtitle["lang"]
 					subtitlefilename = srtbasefilename + "." + extension
 					outfile = open(subtitlefilename, "wb")
 					outfile.write(zf.read(el.orig_filename))
@@ -134,7 +134,7 @@ class SubScene(SubtitleDatabase.SubtitleDB):
 							os.rename(tmpsubtitlefilename, subtitlefilename)
 							# exit
 						return subtitlefilename
-			except OSError, e:
+			except OSError as e:
 			    logging.error("Execution failed: %s" %e)
 			    return None
 			
@@ -151,7 +151,7 @@ class SubScene(SubtitleDatabase.SubtitleDB):
 		dump = open(filename, "wb")
 		try:
 			f.read(1000000)
-		except httplib.IncompleteRead, e:
+		except httplib.IncompleteRead as e:
 			dump.write(e.partial)
 			logging.warn('Incomplete read for %s ... Trying anyway to decompress.' %url)
 		dump.close()
