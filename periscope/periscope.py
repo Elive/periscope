@@ -72,10 +72,10 @@ class Periscope:
         if configLang == "":
             try :
                 return [locale.getdefaultlocale()[0][:2]]
-            except :
+            except Exception:
                 return ["en"]
         else:
-            return map(lambda x : x.strip(), configLang.split(","))
+            return [x.strip() for x in configLang.split(",")]
 
     def set_preferedLanguages(self, langs):
         ''' Update the config file to set the prefered language '''
@@ -91,7 +91,7 @@ class Periscope:
             return self.listExistingPlugins()
         else :
             log.info("plugins read from config : " + configPlugins)
-            return map(lambda x : x.strip(), configPlugins.split(","))
+            return [x.strip() for x in configPlugins.split(",")]
 
     def set_preferedPlugins(self, newPlugins):
         ''' Update the config file to set the prefered plugins) '''
@@ -139,7 +139,7 @@ class Periscope:
 
     def listExistingPlugins(self):
         ''' List all possible plugins from the plugin folder '''
-        return map(lambda x : x.__name__, plugins.SubtitleDatabase.SubtitleDB.__subclasses__())
+        return [x.__name__ for x in plugins.SubtitleDatabase.SubtitleDB.__subclasses__()]
 
     def listSubtitles(self, filename, langs=None):
         '''Searches subtitles within the active plugins and returns all found matching subtitles ordered by language then by plugin.'''
@@ -181,21 +181,21 @@ class Periscope:
 
         if not interactive:
             for l in langs:
-                if subtitles.has_key(l) and len(subtitles[l]):
+                if l in subtitles and len(subtitles[l]):
                     return subtitles[l][0]
         else:
             interactive_subtitles = []
             for l in langs:
-                if subtitles.has_key(l) and len(subtitles[l]):
+                if l in subtitles and len(subtitles[l]):
                     for sub in subtitles[l]:
                         interactive_subtitles.append(sub)
             for i in range(len(interactive_subtitles)):
                 sub = interactive_subtitles[i]
-                print("[%d]: %s" % (i, sub["release"]))
+                print(("[%d]: %s" % (i, sub["release"])))
             sub = None
             while not sub:
                 try:
-                    sub = interactive_subtitles[int(raw_input("Please select a subtitle: "))]
+                    sub = interactive_subtitles[int(input("Please select a subtitle: "))]
                     if sub:
                         return sub
                 except IndexError:

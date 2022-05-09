@@ -19,7 +19,7 @@
 
 import os, struct, gzip, traceback, logging, re, configparser
 import xmlrpc as xmlrpclib
-import configparser as ConfigParser
+import configparser
 import socket # For timeout purposes
 
 from . import SubtitleDatabase
@@ -95,7 +95,7 @@ class OpenSubtitles(SubtitleDatabase.SubtitleDB):
             self.tvshowhash = config.get("Opensubtitles","tvshowhash")			
             self.moviehash = config.get("Opensubtitles","moviehash")				
 			
-        except ConfigParser.NoSectionError:
+        except configparser.NoSectionError:
             config.add_section("Opensubtitles")
             config.set("Opensubtitles", "user", "")
             config.set("Opensubtitles", "pass", "")

@@ -43,8 +43,8 @@ class SubtitleDB(object):
         ''' search subtitles with the given filename for the given languages'''
         try:
             subs = self.process(filename, langs)
-            list(map(lambda item: item.setdefault("plugin", self), subs))
-            list(map(lambda item: item.setdefault("filename", filename), subs))
+            list([item.setdefault("plugin", self) for item in subs])
+            list([item.setdefault("filename", filename) for item in subs])
             log.info("%s writing %s items to queue" % (self.__class__.__name__, len(subs)))
         except:
             log.exception("Error occured")
