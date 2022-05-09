@@ -17,11 +17,11 @@
 #    along with periscope; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import zipfile, os, urllib2, urllib, traceback, logging 
+import zipfile, os, urllib.request, urllib.error, urllib.parse, urllib.request, urllib.parse, urllib.error, traceback, logging 
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
-import SubtitleDatabase
+from . import SubtitleDatabase
 
 log = logging.getLogger(__name__)
 
@@ -77,7 +77,7 @@ class Podnapisi(SubtitleDatabase.SubtitleDB):
         else:
             params["sJ"] = 0
 
-        searchurl = self.host + self.search + urllib.urlencode(params)
+        searchurl = self.host + self.search + urllib.parse.urlencode(params)
         content = self.downloadContent(searchurl, 10)
         
         # Workaround for the Beautifulsoup 3.1 bug
@@ -96,7 +96,7 @@ class Podnapisi(SubtitleDatabase.SubtitleDB):
                     result["link"] = None # We'll find the link later using the page
                     # some url are in unicode but urllib.quote() doesn't handle it
                     # well : http://bugs.python.org/issue1712522
-                    result["page"] = self.host + urllib.quote(pagelink.encode("utf-8"))
+                    result["page"] = self.host + urllib.parse.quote(pagelink.encode("utf-8"))
                     result["lang"] = self.getLG(lng)
                     sublinks.append(result)
 

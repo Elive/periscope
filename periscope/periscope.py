@@ -22,10 +22,10 @@ import sys
 import os
 import threading
 import logging
-from Queue import Queue
+from queue import Queue
 
 import traceback
-import ConfigParser
+import configparser as ConfigParser
 import socket
 socket.setdefaulttimeout(60)
 log = logging.getLogger(__name__)

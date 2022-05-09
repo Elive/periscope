@@ -17,10 +17,12 @@
 #    along with periscope; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import os, struct, xmlrpclib, commands, gzip, traceback, logging, re, ConfigParser
+import os, struct, gzip, traceback, logging, re, configparser
+import xmlrpc as xmlrpclib
+import configparser as ConfigParser
 import socket # For timeout purposes
 
-import SubtitleDatabase
+from . import SubtitleDatabase
 
 log = logging.getLogger(__name__)
 
@@ -84,7 +86,7 @@ class OpenSubtitles(SubtitleDatabase.SubtitleDB):
     def __init__(self, config, cache_folder_path):
         super(OpenSubtitles, self).__init__(OS_LANGS)
         self.server_url = 'http://api.opensubtitles.org/xml-rpc'
-        self.revertlangs = dict(map(lambda item: (item[1],item[0]), self.langs.items()))
+        self.revertlangs = dict([(item[1],item[0]) for item in list(self.langs.items())])
         self.tvshowRegex = re.compile('(?P<show>.*)S(?P<season>[0-9]{2})E(?P<episode>[0-9]{2}).?(?P<data>[a-zA-Z].*)?.(?P<quality>BDRIP.*|BLURAY.*|HDTV.*|420p.HDTV.*|720p.HDTV.*|720p.WEB-DL.*|720p.BLURAY.*|1080p.HDTV.*|1080p.WEB-DL.*|1080p.BLURAY.*|1080i.HDTV)-(?P<group>.*)', re.IGNORECASE)
         self.movieRegex = re.compile('(?P<movie>.*)[\_\.|\[|\(| ]{1}(?P<year>(?:(?:19|20)[0-9]{2})).(?P<dados>.*)-(?P<teams>.*)', re.IGNORECASE)		
         try:
@@ -253,8 +255,8 @@ class OpenSubtitles(SubtitleDatabase.SubtitleDB):
                 result["page"] = r['SubDownloadLink']
                 result["lang"] = self.getLG(r['SubLanguageID'])
                 result["usernick"] = r['UserNickName']				
-                if search.has_key("season") or search.has_key("MovieYear") :
-                    if search.has_key("MovieYear"): 
+                if "season" in search or "MovieYear" in search :
+                    if "MovieYear" in search: 
                         log.debug(" Result is a movie")
                         matches_movie = self.movieRegex.match(r["MovieReleaseName"])
                         if matches_movie: # It looks like a movie
@@ -306,7 +308,7 @@ class OpenSubtitles(SubtitleDatabase.SubtitleDB):
                             #    sublinks.append(result)									
                             else:							
                                 log.info(" Movie release didnt matched. Release: "  + r["MovieReleaseName"] + " Subtitle: " + r['SubFileName'])
-                    if search.has_key("season"):
+                    if "season" in search:
                         log.debug(" Result is a tv-show")
                         matches_tvshow = self.tvshowRegex.match(r["MovieReleaseName"])
                         if matches_tvshow: # It looks like a tv show

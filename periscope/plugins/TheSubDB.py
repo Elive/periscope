@@ -18,15 +18,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 import os
-import urllib2
-import urllib
+import urllib.request, urllib.error, urllib.parse
+import urllib.request, urllib.parse, urllib.error
 import xml.dom.minidom
 import logging
 import traceback
 import hashlib
-import StringIO
+import io
 
-import SubtitleDatabase
+from . import SubtitleDatabase
 
 log = logging.getLogger(__name__)
 
@@ -56,13 +56,13 @@ class TheSubDB(SubtitleDatabase.SubtitleDB):
         log.debug('File hash : %s' % filehash)
         # Make the search
         params = {'action' : 'search', 'hash' : filehash }
-        search_url = self.base_url.format(urllib.urlencode(params))
+        search_url = self.base_url.format(urllib.parse.urlencode(params))
         log.debug('Query URL : %s' % search_url)
-        req = urllib2.Request(search_url)
+        req = urllib.request.Request(search_url)
         req.add_header('User-Agent', self.user_agent)
         subs = []
         try : 
-            page = urllib2.urlopen(req, timeout=5)
+            page = urllib.request.urlopen(req, timeout=5)
             content = page.readlines()
             plugin_langs = content[0].split(',')
             #print(content[0])
@@ -71,11 +71,11 @@ class TheSubDB(SubtitleDatabase.SubtitleDB):
                     result = {}
                     result['release'] = filepath
                     result['lang'] = lang
-                    result['link'] = self.base_url.format(urllib.urlencode({'action':'download', 'hash':filehash , 'language' :lang}))
+                    result['link'] = self.base_url.format(urllib.parse.urlencode({'action':'download', 'hash':filehash , 'language' :lang}))
                     result['page'] = result['link']
                     subs.append(result)
             return subs
-        except urllib2.HTTPError as e :
+        except urllib.error.HTTPError as e :
             if e.code == 404 : # No result found
                 return subs
             else:
@@ -105,10 +105,10 @@ class TheSubDB(SubtitleDatabase.SubtitleDB):
 
     def downloadFile(self, url, srtfilename):
         ''' Downloads the given url to the given filename '''
-        req = urllib2.Request(url)
+        req = urllib.request.Request(url)
         req.add_header('User-Agent', self.user_agent)
         
-        f = urllib2.urlopen(req)
+        f = urllib.request.urlopen(req)
         dump = open(srtfilename, "wb")
         dump.write(f.read())
         dump.close()
@@ -122,7 +122,7 @@ class TheSubDB(SubtitleDatabase.SubtitleDB):
         
         # Upload the subtitle
         params = {'action' : 'upload', 'hash' : filehash}
-        upload_url = self.base_url.format(urllib.urlencode(params))
+        upload_url = self.base_url.format(urllib.parse.urlencode(params))
         log.debug('Query URL : %s' % upload_url)
         sub = open(subpath, "r")
         '''content = sub.read()
@@ -131,13 +131,13 @@ class TheSubDB(SubtitleDatabase.SubtitleDB):
         fd.name = '%s.srt' % filehash
         fd.write(content)'''
         
-        data = urllib.urlencode({'hash' : filehash, 'file' : sub})
-        req = urllib2.Request(upload_url, data)
+        data = urllib.parse.urlencode({'hash' : filehash, 'file' : sub})
+        req = urllib.request.Request(upload_url, data)
         req.add_header('User-Agent', self.user_agent)
         try : 
-            page = urllib2.urlopen(req, data, timeout=5)
+            page = urllib.request.urlopen(req, data, timeout=5)
             log.debug(page.readlines())
-        except urllib2.HTTPError as e :
+        except urllib.error.HTTPError as e :
             log.exception('Error occured while uploading : %s' % e)
             #log.info(fd.name)
             #log.info(fd.len)

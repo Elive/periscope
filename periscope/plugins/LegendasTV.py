@@ -24,19 +24,19 @@
 import xml.dom.minidom
 import traceback
 import hashlib
-import StringIO
+import io
 import zipfile
 import shutil
-import ConfigParser
+import configparser
 import random
 import socket
 
-import cookielib, urllib2, urllib, sys, re, os, webbrowser, time, unicodedata, logging, urlparse, requests
-from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
-from htmlentitydefs import name2codepoint as n2cp
+import http.cookiejar, urllib.request, urllib.error, urllib.parse, urllib.request, urllib.parse, urllib.error, sys, re, os, webbrowser, time, unicodedata, logging, urllib.parse, requests
+from bs4 import BeautifulSoup, BeautifulStoneSoup
+from html.entities import name2codepoint as n2cp
 from datetime import date
 
-import SubtitleDatabase
+from . import SubtitleDatabase
 import subprocess
 
 log = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
             self.password = config.get("LegendasTV","pass")
             self.unrar = config.get("LegendasTV","unrarpath")
             self.sub_ext = config.get("LegendasTV","supportedSubtitleExtensions")
-        except ConfigParser.NoSectionError:
+        except configparser.NoSectionError:
             config.add_section("LegendasTV")
             config.set("LegendasTV", "user", "")
             config.set("LegendasTV", "pass", "")
@@ -112,7 +112,7 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
         return fname
 
     def guessFileData(self, filename):
-        filename = unicode(self.getFileName(self.Uconvert(filename)).lower()).replace("web-dl","webdl").replace("web.dl","webdl").replace("web dl","webdl")
+        filename = str(self.getFileName(self.Uconvert(filename)).lower()).replace("web-dl","webdl").replace("web.dl","webdl").replace("web dl","webdl")
         #log.debug(filename)
         matches_tvshow = self.tvshowRegex.match(filename)
         if matches_tvshow: # It looks like a tv show
@@ -160,10 +160,10 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
         global opener, Logado,naodisponivel
         if Logado == False and naodisponivel == False:
             leg_url= self.url
-            cj = cookielib.CookieJar()
-            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+            cj = http.cookiejar.CookieJar()
+            opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
             opener.addheaders = [('User-agent', ('Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36'))]
-            login_data = urllib.urlencode({'data[User][username]':self.user,'data[User][password]':self.password})
+            login_data = urllib.parse.urlencode({'data[User][username]':self.user,'data[User][password]':self.password})
             
             try:
                 response = opener.open(self.url+'/login',login_data,timeout=10).read()
@@ -775,9 +775,9 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
 
 
     def to_unicode_or_bust(self,obj, encoding='iso-8859-1'):
-         if isinstance(obj, basestring):
-             if not isinstance(obj, unicode):
-                 obj = unicode(obj, encoding)
+         if isinstance(obj, str):
+             if not isinstance(obj, str):
+                 obj = str(obj, encoding)
          return obj
 
     def substitute_entity(self,match):
@@ -786,14 +786,14 @@ class LegendasTV(SubtitleDatabase.SubtitleDB):
             # decoding by number
             if match.group(2) == '':
                 # number is in decimal
-                return unichr(int(ent))
+                return chr(int(ent))
             elif match.group(2) == 'x':
                 # number is in hex
-                return unichr(int('0x'+ent, 16))
+                return chr(int('0x'+ent, 16))
         else:
             # they were using a name
             cp = n2cp.get(ent)
-            if cp: return unichr(cp)
+            if cp: return chr(cp)
             else: return match.group()
 
     def decode_htmlentities(self,string):

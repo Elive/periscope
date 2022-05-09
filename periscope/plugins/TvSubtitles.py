@@ -5,8 +5,8 @@
 
 import logging
 
-import zipfile, os, urllib2
-import os, re, BeautifulSoup, urllib
+import zipfile, os, urllib.request, urllib.error, urllib.parse
+import os, re, BeautifulSoup, urllib.request, urllib.parse, urllib.error
 
 showNum = {
 "24":38,
@@ -244,7 +244,7 @@ showNum = {
  }
 
 
-import SubtitleDatabase
+from . import SubtitleDatabase
 
 class TvSubtitles(SubtitleDatabase.SubtitleDB):
 	url = "http://www.tvsubtitles.net"
@@ -263,7 +263,7 @@ class TvSubtitles(SubtitleDatabase.SubtitleDB):
 			return []
 		show_url = self.URL_SEASON_PATTERN % (showId, season)
 		logging.debug("Show url: %s" % show_url)
-		page = urllib.urlopen(show_url)
+		page = urllib.request.urlopen(show_url)
 		content = page.read()
 		content = content.replace("SCR'+'IPT", "script")
 		soup = BeautifulSoup.BeautifulSoup(content)
@@ -288,7 +288,7 @@ class TvSubtitles(SubtitleDatabase.SubtitleDB):
 			return []
 		show_url = self.URL_SEASON_PATTERN % (showId, season)
 		logging.debug("Show url: %s" % show_url)
-		page = urllib.urlopen(show_url)
+		page = urllib.request.urlopen(show_url)
 		content = page.read()
 		content = content.replace("SCR'+'IPT", "script")
 		soup = BeautifulSoup.BeautifulSoup(content)
@@ -310,7 +310,7 @@ class TvSubtitles(SubtitleDatabase.SubtitleDB):
 						if sub:
 							links.append(sub)
 					else:
-						page2 = urllib.urlopen(self.host + "/" + url)
+						page2 = urllib.request.urlopen(self.host + "/" + url)
 						soup2 = BeautifulSoup.BeautifulSoup(page2)
 						subs = soup2.findAll("div", {"class" : "subtitlen"})
 						for sub in subs:
@@ -331,7 +331,7 @@ class TvSubtitles(SubtitleDatabase.SubtitleDB):
 		subid = url.rsplit("-", 1)[1].split('.', 1)[0]
 		link = self.host + "/download-" + subid + ".html"
 		
-		page = urllib.urlopen(url)
+		page = urllib.request.urlopen(url)
 		content = page.read()
 		content = content.replace("SCR'+'IPT", "script")
 		soup = BeautifulSoup.BeautifulSoup(content)
@@ -364,7 +364,7 @@ class TvSubtitles(SubtitleDatabase.SubtitleDB):
 	def process(self, filename, langs):
 		''' main method to call on the plugin, pass the filename and the wished 
 		languages and it will query TvSubtitles.net '''
-		fname = unicode(self.getFileName(filename).lower())
+		fname = str(self.getFileName(filename).lower())
 		guessedData = self.guessFileData(fname)
 		logging.debug(fname)
 		if guessedData['type'] == 'tvshow':

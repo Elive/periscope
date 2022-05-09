@@ -28,7 +28,13 @@ import threading
 
 import sys
 sys.path.insert(0, os.path.dirname(__file__)+"/..")
+sys.path.insert(0, os.path.dirname(__file__)+"/../periscope")
+sys.path.insert(0, os.path.dirname(__file__)+"/../periscope/plugins")
+
 import periscope
+if periscope.__file__ is None:
+    print("Please switch to a different directory.\n"
+            "PEP 420 adds some extremely inconvenient features to Python. Unfortunately, that means you can't have a folder named 'periscope' in the current directory.\x1b[1;31mPlease rename the folder, or switch to a different folder.\033[0m")
 
 log = logging.getLogger(__name__)
 

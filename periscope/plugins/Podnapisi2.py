@@ -17,11 +17,11 @@
 #    along with periscope; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import zipfile, os, urllib2, urllib, traceback, logging
-import xmlrpclib, struct, socket
+import zipfile, os, urllib.request, urllib.error, urllib.parse, urllib.request, urllib.parse, urllib.error, traceback, logging
+import xmlrpc.client, struct, socket
 from hashlib import md5, sha256
 
-import SubtitleDatabase
+from . import SubtitleDatabase
 
 class Podnapisi(SubtitleDatabase.SubtitleDB):
     url = "http://www.podnapisi.net/"
@@ -52,7 +52,7 @@ class Podnapisi(SubtitleDatabase.SubtitleDB):
         ''' makes a query on podnapisi and returns info (link, lang) about found subtitles'''
         
         #Login
-        self.server = xmlrpclib.Server(self.server_url)
+        self.server = xmlrpc.client.Server(self.server_url)
         socket.setdefaulttimeout(1)
         try:
             log_result = self.server.initiate("Periscope")
@@ -82,7 +82,7 @@ class Podnapisi(SubtitleDatabase.SubtitleDB):
         #self.server.authenticate(token, '', '')
         logging.debug("Authenticated. Starting search")
         results = self.server.search(token, [moviehash])
-        print("Results are %s" %results)
+        print(("Results are %s" %results))
         subs = []
         for sub in results['results']:
             subs.append(sub)

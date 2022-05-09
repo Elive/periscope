@@ -17,40 +17,40 @@
 #    along with periscope; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import zipfile, os, urllib2, urllib, logging, traceback, httplib, re, socket
-from BeautifulSoup import BeautifulSoup
+import zipfile, os, urllib.request, urllib.error, urllib.parse, urllib.request, urllib.parse, urllib.error, logging, traceback, http.client, re, socket
+from bs4 import BeautifulSoup
 
-import SubtitleDatabase
+from . import SubtitleDatabase
 
-LANGUAGES = {u"English" : "en",
-			 u"English (US)" : "en",
-			 u"English (UK)" : "en",
-			 u"Italian" : "it",
-			 u"Portuguese" : "pt",
-			 u"Portuguese (Brazilian)" : "pt-br",
-			 u"Romanian" : "ro",
-			 u"Español (Latinoamérica)" : "es",
-			 u"Español (España)" : "es",
-			 u"Spanish (Latin America)" : "es",
-			 u"Español" : "es",
-			 u"Spanish" : "es",
-			 u"Spanish (Spain)" : "es",
-			 u"French" : "fr",
-			 u"Greek" : "el",
-			 u"Arabic" : "ar",
-			 u"German" : "de",
-			 u"Croatian" : "hr",
-			 u"Indonesian" : "id",
-			 u"Hebrew" : "he",
-			 u"Russian" : "ru",
-			 u"Turkish" : "tr",
-			 u"Swedish" : "se",
-			 u"Czech" : "cs",
-			 u"Dutch" : "nl",
-			 u"Hungarian" : "hu",
-			 u"Norwegian" : "no",
-			 u"Polish" : "pl",
-			 u"Persian" : "fa"}
+LANGUAGES = {"English" : "en",
+			 "English (US)" : "en",
+			 "English (UK)" : "en",
+			 "Italian" : "it",
+			 "Portuguese" : "pt",
+			 "Portuguese (Brazilian)" : "pt-br",
+			 "Romanian" : "ro",
+			 "Español (Latinoamérica)" : "es",
+			 "Español (España)" : "es",
+			 "Spanish (Latin America)" : "es",
+			 "Español" : "es",
+			 "Spanish" : "es",
+			 "Spanish (Spain)" : "es",
+			 "French" : "fr",
+			 "Greek" : "el",
+			 "Arabic" : "ar",
+			 "German" : "de",
+			 "Croatian" : "hr",
+			 "Indonesian" : "id",
+			 "Hebrew" : "he",
+			 "Russian" : "ru",
+			 "Turkish" : "tr",
+			 "Swedish" : "se",
+			 "Czech" : "cs",
+			 "Dutch" : "nl",
+			 "Hungarian" : "hu",
+			 "Norwegian" : "no",
+			 "Polish" : "pl",
+			 "Persian" : "fa"}
 
 class Addic7ed(SubtitleDatabase.SubtitleDB):
 	url = "http://www.addic7ed.com"
@@ -66,7 +66,7 @@ class Addic7ed(SubtitleDatabase.SubtitleDB):
 	def process(self, filepath, langs):
 		''' main method to call on the plugin, pass the filename and the wished 
 		languages and it will query the subtitles source '''
-		fname = unicode(self.getFileName(filepath).lower())
+		fname = str(self.getFileName(filepath).lower())
 		guessedData = self.guessFileData(fname)
 		if guessedData['type'] == 'tvshow':
 			subs = self.query(guessedData['name'], guessedData['season'], guessedData['episode'], guessedData['teams'], langs)
@@ -82,11 +82,11 @@ class Addic7ed(SubtitleDatabase.SubtitleDB):
 		logging.debug("dl'ing %s" %searchurl)
 		try:
 			socket.setdefaulttimeout(3)
-			page = urllib2.urlopen(searchurl)
-		except urllib2.HTTPError as inst:
+			page = urllib.request.urlopen(searchurl)
+		except urllib.error.HTTPError as inst:
 			logging.info("Error : %s - %s" %(searchurl, inst))
 			return sublinks
-		except urllib2.URLError as inst:
+		except urllib.error.URLError as inst:
 			logging.info("TimeOut : %s" %inst)
 			return sublinks
 		
@@ -158,9 +158,9 @@ class Addic7ed(SubtitleDatabase.SubtitleDB):
 
 	def downloadFile(self, url, srtfilename):
 		''' Downloads the given url to the given filename '''
-		req = urllib2.Request(url, headers={'Referer' : url, 'User-Agent' : 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.3)'})
+		req = urllib.request.Request(url, headers={'Referer' : url, 'User-Agent' : 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.3)'})
 		
-		f = urllib2.urlopen(req)
+		f = urllib.request.urlopen(req)
 		dump = open(srtfilename, "wb")
 		dump.write(f.read())
 		dump.close()
