@@ -21,12 +21,12 @@ import logging
 import os
 import re
 import subprocess
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
-import SubtitleDatabase
+from . import SubtitleDatabase
 
 
 LANGUAGES = {"es": "Spanish"}
@@ -49,7 +49,7 @@ class SubDivX(SubtitleDatabase.SubtitleDB):
         if 'es' not in langs:
             return []
 
-        fname = unicode(self.getFileName(filepath).lower())
+        fname = str(self.getFileName(filepath).lower())
         guessedData = self.guessFileData(fname)
         if guessedData['type'] == 'tvshow':
             subs = self.query(guessedData['name'],
@@ -102,7 +102,7 @@ class SubDivX(SubtitleDatabase.SubtitleDB):
         params = {'buscar': query,
                   'accion': '5',
                   'oxdown': '1', }
-        encoded_params = urllib.urlencode(params)
+        encoded_params = urllib.parse.urlencode(params)
         query_url = '%s?%s' % (self.api_base_url, encoded_params)
 
         logging.debug("SubDivX query: %s", query_url)
@@ -129,9 +129,9 @@ class SubDivX(SubtitleDatabase.SubtitleDB):
         '''
         download_url = self._get_download_link(subtitle["link"])
         subtitle["link"] = download_url
-        request = urllib2.Request(download_url)
+        request = urllib.request.Request(download_url)
         request.get_method = lambda: 'HEAD'
-        response = urllib2.urlopen(request)
+        response = urllib.request.urlopen(request)
 
         if response.url.endswith('.zip'):
             # process as usual

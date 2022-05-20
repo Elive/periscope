@@ -184,7 +184,7 @@ class Podnapisi2TestCase(unittest.TestCase):
 '''
 class PodnapisiTestCase(unittest.TestCase):
     def runTest(self):
-        import Podnapisi
+        from . import Podnapisi
         subdb = Podnapisi.Podnapisi(None, None)
         results = subdb.process("Game.Of.Thrones.S01E10.mkv", None)
         assert len(results) > 5, "Not enough result could be found for Community.S01E01.Pilot.HDTV.XviD-FQM.avi and no languages (expected 6)"

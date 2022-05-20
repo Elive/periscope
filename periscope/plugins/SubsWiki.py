@@ -17,22 +17,22 @@
 #    along with periscope; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import zipfile, os, urllib2, urllib, logging, traceback, httplib, re, socket
-from BeautifulSoup import BeautifulSoup
+import zipfile, os, urllib.request, urllib.error, urllib.parse, urllib.request, urllib.parse, urllib.error, logging, traceback, http.client, re, socket
+from bs4 import BeautifulSoup
 
-import SubtitleDatabase
+from . import SubtitleDatabase
 
-LANGUAGES = {u"English (US)" : "en",
-             u"English (UK)" : "en",
-             u"English" : "en",
-             u"French" : "fr",
-             u"Brazilian" : "pt-br",
-             u"Portuguese" : "pt",
-             u"Español (Latinoamérica)" : "es",
-             u"Español (España)" : "es",
-             u"Español" : "es",
-             u"Italian" : "it",
-             u"Català" : "ca"}
+LANGUAGES = {"English (US)" : "en",
+             "English (UK)" : "en",
+             "English" : "en",
+             "French" : "fr",
+             "Brazilian" : "pt-br",
+             "Portuguese" : "pt",
+             "Español (Latinoamérica)" : "es",
+             "Español (España)" : "es",
+             "Español" : "es",
+             "Italian" : "it",
+             "Català" : "ca"}
 
 class SubsWiki(SubtitleDatabase.SubtitleDB):
     url = "http://www.subswiki.com"
@@ -48,7 +48,7 @@ class SubsWiki(SubtitleDatabase.SubtitleDB):
     def process(self, filepath, langs):
         ''' main method to call on the plugin, pass the filename and the wished 
         languages and it will query the subtitles source '''
-        fname = unicode(self.getFileName(filepath).lower())
+        fname = str(self.getFileName(filepath).lower())
         guessedData = self.guessFileData(fname)
         if guessedData['type'] == 'tvshow':
             subs = self.query(guessedData['name'], guessedData['season'], guessedData['episode'], guessedData['teams'], langs)
@@ -63,11 +63,11 @@ class SubsWiki(SubtitleDatabase.SubtitleDB):
         searchurl = "%s/serie/%s/%s/%s/" %(self.host, name, season, episode)
         logging.debug("dl'ing %s" %searchurl)
         try:
-            page = urllib2.urlopen(searchurl)
+            page = urllib.request.urlopen(searchurl)
             ''' test if no redirect was made '''
             if page.geturl() != searchurl :
                 return sublinks
-        except (urllib2.HTTPError, urllib2.URLError, socket.timeout) as inst:
+        except (urllib.error.HTTPError, urllib.error.URLError, socket.timeout) as inst:
             logging.warning("Error : %s for %s" % (searchurl, inst))
             return sublinks
 
@@ -131,9 +131,9 @@ class SubsWiki(SubtitleDatabase.SubtitleDB):
 
     def downloadFile(self, url, filename):
         ''' Downloads the given url to the given filename '''
-        req = urllib2.Request(url, headers={'Referer' : url, 'User-Agent' : 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.3)'})
+        req = urllib.request.Request(url, headers={'Referer' : url, 'User-Agent' : 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.3)'})
         
-        f = urllib2.urlopen(req)
+        f = urllib.request.urlopen(req)
         dump = open(filename, "wb")
         dump.write(f.read())
         dump.close()

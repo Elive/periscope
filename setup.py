@@ -3,7 +3,7 @@ from setuptools import setup
 PACKAGE = 'periscope'
 
 setup(name = PACKAGE,
-      version = 'dev',
+      version = '0.1.dev1',
       license = "GNU LGPL",
       description = "Python module to download subtitles for a given video file",
       author = "Patrick Dessalle",
@@ -12,5 +12,5 @@ setup(name = PACKAGE,
       packages= [ "periscope", "periscope/plugins" ],
       py_modules=["periscope"],
       scripts = [ "bin/periscope" ],
-      install_requires = ["BeautifulSoup >= 3.2.0"]
+      install_requires = ["BeautifulSoup4 >= 4.9.0"]
       )

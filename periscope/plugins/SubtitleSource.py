@@ -17,8 +17,8 @@
 #    along with periscope; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import os, urllib2, urllib, xml.dom.minidom, logging, traceback
-import ConfigParser
+import os, urllib.request, urllib.error, urllib.parse, urllib.request, urllib.parse, urllib.error, xml.dom.minidom, logging, traceback
+import configparser
 
 try:
     import xdg.BaseDirectory as bd
@@ -26,7 +26,7 @@ try:
 except ImportError:
     is_local = False
     
-import SubtitleDatabase
+from . import SubtitleDatabase
 
 SS_LANGUAGES = {"en": "English",
                 "sv": "Swedish",
@@ -81,7 +81,7 @@ class SubtitleSource(SubtitleDatabase.SubtitleDB):
         if not langs: # langs is empty of None
             languages = ["all"]
         else: # parse each lang to generate the equivalent lang
-            languages = [SS_LANGUAGES[l] for l in langs if l in SS_LANGUAGES.keys()]
+            languages = [SS_LANGUAGES[l] for l in langs if l in list(SS_LANGUAGES.keys())]
             
         # Get the CD part of this
         metaData = self.guessFileData(token)
@@ -91,9 +91,9 @@ class SubtitleSource(SubtitleDatabase.SubtitleDB):
             part = 1
                             
         for lang in languages:
-            searchurl = "%s/%s/%s/0" %(self.host, urllib.quote(token), lang)
+            searchurl = "%s/%s/%s/0" %(self.host, urllib.parse.quote(token), lang)
             logging.debug("dl'ing %s" %searchurl)
-            page = urllib2.urlopen(searchurl, timeout=5)
+            page = urllib.request.urlopen(searchurl, timeout=5)
             xmltree = xml.dom.minidom.parse(page)
             subs = xmltree.getElementsByTagName("sub")
 

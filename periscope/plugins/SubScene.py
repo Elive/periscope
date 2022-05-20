@@ -17,10 +17,10 @@
 #    along with periscope; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import zipfile, os, urllib2, urllib, logging, traceback, httplib
-from BeautifulSoup import BeautifulSoup
+import zipfile, os, urllib.request, urllib.error, urllib.parse, urllib.request, urllib.parse, urllib.error, logging, traceback, http.client
+from bs4 import BeautifulSoup
 
-import SubtitleDatabase
+from . import SubtitleDatabase
 
 SS_LANGUAGES = {"en": "English",
 				"se": "Swedish",
@@ -88,7 +88,7 @@ class SubScene(SubtitleDatabase.SubtitleDB):
 		'''pass the URL of the sub and the file it matches, will unzip it
 		and return the path to the created file'''
 		subpage = subtitle["page"]
-		page = urllib2.urlopen(subpage)
+		page = urllib.request.urlopen(subpage)
 		soup = BeautifulSoup(page)
 		
 		dlhref = soup.find("div", {"class" : "download"}).find("a")["href"]
@@ -145,13 +145,13 @@ class SubScene(SubtitleDatabase.SubtitleDB):
 	def downloadFile(self, url, filename):
 		''' Downloads the given url to the given filename '''
 		logging.info("Downloading file %s" %url)
-		req = urllib2.Request(url, headers={'Referer' : url, 'User-Agent' : 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.3)'})
+		req = urllib.request.Request(url, headers={'Referer' : url, 'User-Agent' : 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.3)'})
 		
-		f = urllib2.urlopen(req, data=urllib.urlencode({'__EVENTTARGET' : 's$lc$bcr$downloadLink', '__EVENTARGUMENT' : '', '__VIEWSTATE' : '/wEPDwUHNzUxOTkwNWRk4wau5efPqhlBJJlOkKKHN8FIS04='}))
+		f = urllib.request.urlopen(req, data=urllib.parse.urlencode({'__EVENTTARGET' : 's$lc$bcr$downloadLink', '__EVENTARGUMENT' : '', '__VIEWSTATE' : '/wEPDwUHNzUxOTkwNWRk4wau5efPqhlBJJlOkKKHN8FIS04='}))
 		dump = open(filename, "wb")
 		try:
 			f.read(1000000)
-		except httplib.IncompleteRead as e:
+		except http.client.IncompleteRead as e:
 			dump.write(e.partial)
 			logging.warn('Incomplete read for %s ... Trying anyway to decompress.' %url)
 		dump.close()
@@ -163,9 +163,9 @@ class SubScene(SubtitleDatabase.SubtitleDB):
 		''' makes a query on subscene and returns info (link, lang) about found subtitles'''
 		sublinks = []
 		
-		searchurl = "%s%s" %(self.host, urllib.quote(token))
+		searchurl = "%s%s" %(self.host, urllib.parse.quote(token))
 		logging.debug("dl'ing %s" %searchurl)
-		page = urllib2.urlopen(searchurl)
+		page = urllib.request.urlopen(searchurl)
 		
 		soup = BeautifulSoup(page)
 		for subs in soup("a", {"class":"a1"}):

@@ -17,7 +17,7 @@
 #    along with periscope; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import os, shutil, urllib2, sys, logging, traceback, zipfile, socket
+import os, shutil, urllib.request, urllib.error, urllib.parse, sys, logging, traceback, zipfile, socket
 import struct
 import socket # For timeout purposes
 import re
@@ -31,10 +31,10 @@ class SubtitleDB(object):
     def __init__(self, langs, revertlangs = None):
         if langs:
             self.langs = langs
-            self.revertlangs = dict(map(lambda item: (item[1],item[0]), self.langs.items()))
+            self.revertlangs = dict([(item[1],item[0]) for item in list(self.langs.items())])
         if revertlangs:
             self.revertlangs = revertlangs
-            self.langs = dict(map(lambda item: (item[1],item[0]), self.revertlangs.items()))
+            self.langs = dict([(item[1],item[0]) for item in list(self.revertlangs.items())])
         self.tvshowRegex = re.compile('(?P<show>.*)S(?P<season>[0-9]{2})E(?P<episode>[0-9]{2}).(?P<teams>.*)', re.IGNORECASE)
         self.tvshowRegex2 = re.compile('(?P<show>.*).(?P<season>[0-9]{1,2})x(?P<episode>[0-9]{1,2}).(?P<teams>.*)', re.IGNORECASE)
         self.movieRegex = re.compile('(?P<movie>.*)[\.|\[|\(| ]{1}(?P<year>(?:(?:19|20)[0-9]{2}))(?P<teams>.*)', re.IGNORECASE)
@@ -43,8 +43,8 @@ class SubtitleDB(object):
         ''' search subtitles with the given filename for the given languages'''
         try:
             subs = self.process(filename, langs)
-            map(lambda item: item.setdefault("plugin", self), subs)
-            map(lambda item: item.setdefault("filename", filename), subs)
+            list([item.setdefault("plugin", self) for item in subs])
+            list([item.setdefault("filename", filename) for item in subs])
             log.info("%s writing %s items to queue" % (self.__class__.__name__, len(subs)))
         except:
             log.exception("Error occured")
@@ -95,16 +95,16 @@ class SubtitleDB(object):
         ''' Downloads the given url and returns its contents.'''
         try:
             log.debug("Downloading %s" % url)
-            req = urllib2.Request(url, headers={'Referer' : url, 'User-Agent' : USER_AGENT})
+            req = urllib.request.Request(url, headers={'Referer' : url, 'User-Agent' : USER_AGENT})
             if timeout:
                 socket.setdefaulttimeout(timeout)
-            f = urllib2.urlopen(req)
+            f = urllib.request.urlopen(req)
             content = f.read()
             f.close()
             return content
-        except urllib2.HTTPError as e:
+        except urllib.error.HTTPError as e:
             log.warning("HTTP Error: %s - %s" % (e.code, url))
-        except urllib2.URLError as e:
+        except urllib.error.URLError as e:
             log.warning("URL Error: %s - %s" % (e.reason, url))
         except socket.timeout as e:
             log.warming("Connection timeout %s - %s" %(e.reason, url))
@@ -150,7 +150,7 @@ class SubtitleDB(object):
         return fname
         
     def guessFileData(self, filename):
-        filename = unicode(self.getFileName(filename).lower())
+        filename = str(self.getFileName(filename).lower())
         matches_tvshow = self.tvshowRegex.match(filename)
         if matches_tvshow: # It looks like a tv show
             (tvshow, season, episode, teams) = matches_tvshow.groups()
