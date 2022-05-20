@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 #   This file is part of periscope.
@@ -19,6 +19,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 import os
+import sys
+
+if not os.environ.get('PROCEED_ANYWAY_WITH_PERISCOPE'):
+    os.system("""zenity --error --text="Unfortunately this feature is not working at the moment in Elive and we have not time to look how to fix it, but if you know python3 you are more than welcome to try to fix this amazing tool that makes Elive so unique and handy! You can found the source code on: https://github.com/Elive/periscope" """)
+    os.system("""zenity --info --text="In the meantime, you can find a subtitle downloader in smplayer's (and many other media players') menus." """)
+    sys.exit(1)
+
 import shutil
 import mimetypes
 from optparse import OptionParser
